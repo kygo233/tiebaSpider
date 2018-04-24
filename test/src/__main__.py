@@ -1,18 +1,11 @@
 
-import queue
-import threading
-import time
 from bs4 import BeautifulSoup 
 import urllib.request
 import re  
 import multiprocessing
-from multiprocessing import Pool
-from time import sleep
-    
+import time    
 def getMemberList_PAGE(pagenum):
-    url_Member  = "http://tieba.baidu.com/bawu2/platform/listMemberInfo?word=%D0%DE%B3%B5tv"
     url_Member1 = "http://tieba.baidu.com/bawu2/platform/listMemberInfo?word=%D0%DE%B3%B5tv&pn=pagenum"
-    url_grxx = "http://www.baidu.com/p/username/detail"
     list2 = []
     url = url_Member1.replace("pagenum", str(pagenum));
     page = urllib.request.urlopen(url);
@@ -22,7 +15,6 @@ def getMemberList_PAGE(pagenum):
     for tag in tag_a :
         list2.append(tag.get("title"))
     list_name=list(set(list2)) 
-    print("Page "+str(pagenum)+":"+list_name)   
     return  list_name 
 
 def gettbname(username):
@@ -46,27 +38,42 @@ def counttb(list1):
                 counts[tb] = 1
     return counts 
 
-   
+def counttb_Pool(tblist):
+    counts = { }           
+    for x in tblist: 
+        tb_list=x.get()   
+        for tb in tb_list:
+            if  tb in counts:
+                counts[tb] += 1
+            else:
+                counts[tb] = 1
+    return counts 
 
+ 
 if __name__ == "__main__":
-    results = []
-    
+    t1 = time.time()
+    #print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t1)))
+    result = []
     pool = multiprocessing.Pool(processes=10)
     for page in range(1,10):
-        results.append(pool.apply_async(getMemberList_PAGE,(page,))) 
+        result.append(pool.apply_async(getMemberList_PAGE,(page,))) 
     pool.close()
     pool.join()
-    
-#     print (results[0].get()) 
-#     result2 = []
-#     pool2 = multiprocessing.Pool(processes=10) 
-#     for num in range(0,len(results)):
-#         if results[num]._success:
-#             print ( results[num]._success) 
-            
-         
-#         for n in results[num] : 
-#             result2.append(pool2.apply_async(gettbname,(n,))) 
-#     pool2.close()
-#     pool2.join()
-#     print (result2) 
+    #print("Name got!")
+    result2 = []
+    pool2 = multiprocessing.Pool(processes=24) 
+    for list_name in result:
+        list_name1 = list_name.get()
+        for n in list_name1 : 
+            result2.append(pool2.apply_async(gettbname,(n,))) 
+    pool2.close()
+    pool2.join()
+# print("Begin counting!")
+#    print(counttb_Pool(result2))
+    t2 = time.time()
+    #print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t2)))
+    print(t2-t1)
+    for tb_name in result2:
+        tb_name1 = tb_name.get()
+        print(tb_name1)
+        

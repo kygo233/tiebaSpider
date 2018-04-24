@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from bs4 import BeautifulSoup 
 import urllib.request
 import re  
@@ -19,18 +20,18 @@ def getHtml2(url):
     return BeautifulSoup(html, "lxml") ;
 def getPagenum():
     html = getHtml(url_Member,'GBK')
-    pattern = re.compile(r'¹²(.*?)Ò³')
+    pattern = re.compile(r'å…±(.*?)é¡µ')
     list1=pattern.findall(html.prettify())
     return list1
-#»ñÈ¡ÓÃ»§Ãû
+#è·å–ç”¨æˆ·å
 
 
 def getMemberList():
     list1 =getPagenum();
     pagenum=int(list1[0]);
     list2 = []
-    for page in range(0,pagenum):
-        print("µÚ"+str(page)+"Ò³")
+    for page in range(0,3):
+        print("ç¬¬"+str(page)+"é¡µ")
         soup = getHtml(url_Member1.replace("pagenum", str(page)),'GBK')
         tag_a = soup.select(".user_name")
         for tag in tag_a :
@@ -44,8 +45,8 @@ def getgzUrl(username):
     return url_gz.replace("username", username) ;
 
 def getgrxx(username):
-    grxx={'ÓÃ»§Ãû':'','ĞÔ±ğ':'','ÉúÈÕ':'','ÑªĞÍ':'','³öÉúµØ':'','¾Ó×¡µØ':''}
-    grxx['ÓÃ»§Ãû']=username;
+    grxx={'ç”¨æˆ·å':'','æ€§åˆ«':'','ç”Ÿæ—¥':'','è¡€å‹':'','å‡ºç”Ÿåœ°':'','å±…ä½åœ°':''}
+    grxx['ç”¨æˆ·å']=username;
     tag=getHtml(getgrxxUrl(username),'UTF-8').select(".userdetail-profile-basic")
     key=tag[0].select(".profile-attr")
     value=tag[0].select(".profile-cnt")
@@ -53,9 +54,9 @@ def getgrxx(username):
         grxx[key[i].get_text()]=value[i].get_text()
 
 def counttb(list1):
-    counts = { }          #×Öµä
+    counts = { }          #å­—å…¸
     for x in list1:    
-        print(x)                  #time_zones ÎªÁĞ±í
+        print(x)                  #time_zones ä¸ºåˆ—è¡¨
         for tb in x:
             if  tb in counts:
                 counts[tb] += 1
@@ -67,6 +68,7 @@ list_tieba=[]
 nameList=getMemberList()
 print(nameList)
 for i in range(len(nameList)):
+    print(getgzUrl(nameList[i]))
     html=getHtml2(getgzUrl(nameList[i]))
     pattern = re.compile(r'target=_blank title=\'(.*?)\'>')
     list1=pattern.findall(html.prettify())
@@ -81,8 +83,8 @@ f.close()
  
 # nameList=getMemberList(url_Member)
 # for i in range(len(nameList)):
-#     grxx={'ÓÃ»§Ãû':'','ĞÔ±ğ':'','ÉúÈÕ':'','ÑªĞÍ':'','³öÉúµØ':'','¾Ó×¡µØ':''}
-#     grxx['ÓÃ»§Ãû']=nameList[i];
+#     grxx={'ç”¨æˆ·å':'','æ€§åˆ«':'','ç”Ÿæ—¥':'','è¡€å‹':'','å‡ºç”Ÿåœ°':'','å±…ä½åœ°':''}
+#     grxx['ç”¨æˆ·å']=nameList[i];
 #     tag=getHtml(getgrxxUrl(nameList[i]),'UTF-8').select(".userdetail-profile-basic")
 #     key=tag[0].select(".profile-attr")
 #     value=tag[0].select(".profile-cnt")
