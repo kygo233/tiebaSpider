@@ -1,5 +1,4 @@
 # -*- coding: GBK -*-
-import json
 def dict2list(dic:dict):
     ''' 将字典转化为列表 '''
     keys = dic.keys()

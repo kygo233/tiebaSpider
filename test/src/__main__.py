@@ -39,6 +39,7 @@ def counttb(list1):
     return counts 
 
 def counttb_Pool(tblist):
+    print("Begin counting!")
     counts = { }           
     for x in tblist: 
         tb_list=x.get()   
@@ -55,23 +56,21 @@ if __name__ == "__main__":
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t1)))
     result = []
     pool = multiprocessing.Pool(processes=20)
-    for page in range(1,100):
+    for page in range(100,200):
         time.sleep(0.1)
         result.append(pool.apply_async(getMemberList_PAGE,(page,))) 
     pool.close()
     pool.join()
     print("Name got!")
     result2 = []
-    pool2 = multiprocessing.Pool(processes=24) 
+    pool2 = multiprocessing.Pool(processes=100) 
     for list_name in result:
         list_name1 = list_name.get()
         for n in list_name1 : 
-            time.sleep(0.1)
+            time.sleep(0.05)
             result2.append(pool2.apply_async(gettbname,(n,))) 
     pool2.close()
     pool2.join()
-    print("Begin counting!")
-    print(len(result2))
     print(counttb_Pool(result2))
     t2 = time.time()
     print(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t2)))
