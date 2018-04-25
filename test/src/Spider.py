@@ -2,7 +2,7 @@
 from bs4 import BeautifulSoup 
 import urllib.request
 import re  
-
+import random 
 url_Member  = "http://tieba.baidu.com/bawu2/platform/listMemberInfo?word=%D0%DE%B3%B5tv";
 url_Member1 = "http://tieba.baidu.com/bawu2/platform/listMemberInfo?word=%D0%DE%B3%B5tv&pn=pagenum";
 url_gz = "http://www.baidu.com/p/username?from=tieba";
@@ -13,9 +13,16 @@ def getHtml(url,charset):
     html = page.read().decode(charset)
     return BeautifulSoup(html, "lxml") ;
 
-def getHtml2(url):  
-    page = urllib.request.urlopen(url)  
-    html = page.read().decode("UTF-8")
+def getHtml2(url): 
+    iplist = ['183.159.92.115:18118','117.71.150.176:61234','113.128.132.169:8181']
+     
+    proxy_handler=urllib.request.ProxyHandler({'http':random.choice(iplist)})
+    opener=urllib.request.build_opener(proxy_handler)
+    opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36')]
+    urllib.request.install_opener(opener)
+    
+    response=urllib.request.urlopen(url) 
+    html = response.read().decode("UTF-8")
     html=html.replace('\\x22',"'")
     return BeautifulSoup(html, "lxml") ;
 def getPagenum():
